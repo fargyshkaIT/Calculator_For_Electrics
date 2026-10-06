@@ -12,7 +12,6 @@ body {
 }
 .container {
     display: grid;
-    /* Три колонки: две для расчетов, одна для истории */
     grid-template-columns: 1fr 1fr 1fr;
     gap: 30px;
     width: 100%;
@@ -90,7 +89,6 @@ button:hover {
 .success { color: #55ff55; }
 .error { color: #ff5555; }
 
-/* Стили для нового блока истории */
 .history-list {
     flex-grow: 1;
     overflow-y: auto;
