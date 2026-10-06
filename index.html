@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор Электрика</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h2>Закон Ома</h2>
+        <div class="form-group">
+            <div class="radio-group">
+                <label><input type="radio" name="mode" value="I" checked> Расчет Тока (I)</label>
+                <label><input type="radio" name="mode" value="P"> Расчет Мощности (P)</label>
+            </div>
+            <input type="number" id="v1" placeholder="Значение 1 (Напряжение / Вт)">
+            <input type="number" id="v2" placeholder="Значение 2 (Сопротивление / Ток)">
+        </div>
+        <div class="bottom-section">
+            <button onclick="runOhm()">Рассчитать</button>
+            <div id="res_ohm" class="result">Результат отобразится здесь</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Расчет сечения кабеля</h2>
+        <div class="form-group">
+            <select id="mat">
+                <option value="Медь">Медь</option>
+                <option value="Алюминий">Алюминий</option>
+            </select>
+            <input type="number" id="p_wire" placeholder="Мощность нагрузки (кВт)">
+        </div>
+        <div class="bottom-section">
+            <button onclick="runWire()">Рассчитать кабель</button>
+            <div id="res_wire" class="result">Результат отобразится здесь</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function runOhm() {
+        const mode = document.querySelector('input[name="mode"]:checked').value;
+        const v1 = document.getElementById('v1').value;
+        const v2 = document.getElementById('v2').value;
+
+        pywebview.api.py_calc_ohm(mode, v1, v2).then(response => {
+            const el = document.getElementById('res_ohm');
+            el.innerText = response.text;
+            el.className = 'result ' + (response.status === 'ok' ? 'success' : 'error');
+        });
+    }
+
+    function runWire() {
+        const mat = document.getElementById('mat').value;
+        const p = document.getElementById('p_wire').value;
+
+        pywebview.api.py_calc_wire(p, mat).then(response => {
+            const el = document.getElementById('res_wire');
+            el.innerText = response.text;
+            el.className = 'result ' + (response.status === 'ok' ? 'success' : 'error');
+        });
+    }
+</script>
+</body>
+</html>

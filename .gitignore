@@ -1,0 +1,16 @@
+# Окружение Python
+.venv/
+venv/
+
+# Временные папки сборщика PyInstaller
+build/
+*.spec
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Настройки PyCharm
+.idea/
