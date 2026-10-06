@@ -38,9 +38,46 @@
             <div id="res_wire" class="result">Результат отобразится здесь</div>
         </div>
     </div>
+
+    <div class="card">
+        <h2>История расчетов</h2>
+        <div class="history-list" id="historyLog">
+        </div>
+        <div class="bottom-section">
+            <button class="btn-clear" onclick="clearHistory()">Очистить историю</button>
+        </div>
+    </div>
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const saved = JSON.parse(localStorage.getItem("calc_history") || "[]");
+        saved.forEach(item => addRecordToDOM(item.text, item.time));
+    });
+
+    function saveToHistory(text) {
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+        addRecordToDOM(text, time);
+
+        const saved = JSON.parse(localStorage.getItem("calc_history") || "[]");
+        saved.unshift({ text, time }); // Добавляем в начало массива
+        if (saved.length > 20) saved.pop(); // Ограничим историю 20 записями
+        localStorage.setItem("calc_history", JSON.stringify(saved));
+    }
+
+    function addRecordToDOM(text, time) {
+        const log = document.getElementById('historyLog');
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `<div class="time">${time}</div><div>${text.replace('\n', ' | ')}</div>`;
+        log.insertBefore(item, log.firstChild); // Выводим новые записи сверху
+    }
+
+    function clearHistory() {
+        localStorage.removeItem("calc_history");
+        document.getElementById('historyLog').innerHTML = '';
+    }
+
     function runOhm() {
         const mode = document.querySelector('input[name="mode"]:checked').value;
         const v1 = document.getElementById('v1').value;
@@ -49,7 +86,12 @@
         pywebview.api.py_calc_ohm(mode, v1, v2).then(response => {
             const el = document.getElementById('res_ohm');
             el.innerText = response.text;
-            el.className = 'result ' + (response.status === 'ok' ? 'success' : 'error');
+            if (response.status === 'ok') {
+                el.className = 'result success';
+                saveToHistory(`Закон Ома: ${response.text}`);
+            } else {
+                el.className = 'result error';
+            }
         });
     }
 
@@ -60,7 +102,12 @@
         pywebview.api.py_calc_wire(p, mat).then(response => {
             const el = document.getElementById('res_wire');
             el.innerText = response.text;
-            el.className = 'result ' + (response.status === 'ok' ? 'success' : 'error');
+            if (response.status === 'ok') {
+                el.className = 'result success';
+                saveToHistory(`Кабель (${mat}): ${response.text}`);
+            } else {
+                el.className = 'result error';
+            }
         });
     }
 </script>
