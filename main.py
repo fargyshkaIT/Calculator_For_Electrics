@@ -1,5 +1,7 @@
 import math
 import webview
+import os
+import sys
 
 class Api:
     def py_calc_ohm(self, mode: str, v1_raw: str, v2_raw: str) -> dict:
@@ -43,7 +45,7 @@ class Api:
 api = Api()
 
 window = webview.create_window(
-    title='Профессиональный калькулятор электрика',
+    title='Калькулятор электрика',
     url='index.html',
     js_api=api,
     width=1920,
